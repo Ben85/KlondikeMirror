@@ -83,7 +83,6 @@ public class Game extends Pane {
             handleValidMove(card, pile);
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
-            draggedCards = null;
         }
     };
 
@@ -133,6 +132,7 @@ public class Game extends Pane {
     }
 
     private void handleValidMove(Card card, Pile destPile) {
+        int king = 13;
         String msg = null;
         if (destPile.isEmpty()) {
             if (destPile.getPileType().equals(Pile.PileType.FOUNDATION))
@@ -142,11 +142,33 @@ public class Game extends Pane {
         } else {
             msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
         }
-        System.out.println(msg);
-        MouseUtil.slideToDest(draggedCards, destPile);
+        if (isRightRank(card, destPile)) {
+            if (destPile.isEmpty() && card.getRank() == king){
+                System.out.println(msg);
+                MouseUtil.slideToDest(draggedCards, destPile);
+                draggedCards.clear();
+            } else if ( !destPile.isEmpty() && Card.isOppositeColor(card, destPile.getTopCard())) {
+                System.out.println(msg);
+                MouseUtil.slideToDest(draggedCards, destPile);
+                draggedCards.clear();
+            } else {
+                onFalseMove(card);
+            }
+        } else {
+            onFalseMove(card);
+        }
+    }
+
+    private void onFalseMove(Card card){
+        System.out.println("Invalid Move");
+        MouseUtil.slideBack(card);
         draggedCards.clear();
     }
 
+    private boolean isRightRank(Card card, Pile destpile ){
+        Card card2 = destpile.getTopCard();
+        return (destpile.isEmpty() || card2.getRank() - card.getRank() == 1);
+    }
 
     private void initPiles() {
         stockPile = new Pile(Pile.PileType.STOCK, "Stock", STOCK_GAP);
