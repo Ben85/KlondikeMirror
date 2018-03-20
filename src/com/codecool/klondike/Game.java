@@ -132,7 +132,6 @@ public class Game extends Pane {
     }
 
     private void handleValidMove(Card card, Pile destPile) {
-        int king = 13;
         String msg = null;
         if (destPile.isEmpty()) {
             if (destPile.getPileType().equals(Pile.PileType.FOUNDATION))
@@ -143,7 +142,7 @@ public class Game extends Pane {
             msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
         }
         if (isRightRank(card, destPile)) {
-            if (destPile.isEmpty() && card.getRank() == king){
+            if (destPile.isEmpty() && card.getRank().getName().equals("King")){
                 System.out.println(msg);
                 MouseUtil.slideToDest(draggedCards, destPile);
                 draggedCards.clear();
@@ -167,7 +166,7 @@ public class Game extends Pane {
 
     private boolean isRightRank(Card card, Pile destpile ){
         Card card2 = destpile.getTopCard();
-        return (destpile.isEmpty() || card2.getRank() - card.getRank() == 1);
+        return (destpile.isEmpty() || card2.getRank().getValue() - card.getRank().getValue() == 1);
     }
 
     private void initPiles() {
