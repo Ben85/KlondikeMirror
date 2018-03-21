@@ -48,7 +48,7 @@ public class Pile extends Pane {
     }
 
     public void clear() {
-        //is it a clear screen? or wut?
+        this.getCards().clear();
     }
 
     public void addCard(Card card) {
