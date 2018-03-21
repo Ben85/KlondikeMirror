@@ -94,8 +94,18 @@ public class Game extends Pane {
         Pile foundationPile = getValidIntersectingPile(card, foundationPiles);
         if (pile != null) {
             handleValidMove(card, pile);
+            Card card2 = card.getContainingPile().getCardUnderTopCard(card);
+            if(card2.isFaceDown()){
+                card2.flip();
+            }
+
         } else if (foundationPile != null) {
             handleValidMove(card, foundationPile);
+            if(card.getContainingPile().getCardUnderTopCard(card).isFaceDown()){
+                card.getContainingPile().getCardUnderTopCard(card).flip();
+                System.out.println("Wurking");
+            }
+
         } else {
             System.out.println("Invalid Move!");
             for (Card cards : draggedCards){
@@ -254,6 +264,21 @@ public class Game extends Pane {
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
         //TODO
+        /** Dealing facedown cards to each tableau */
+        for (int i = 0; i < tableauPiles.size(); i++) {
+            for (int j = 0; j <= i; j++) {
+                Card card = deckIterator.next();
+                tableauPiles.get(i).addCard(card);
+                addMouseEventHandlers(card);
+                getChildren().add(card);
+            }
+        }
+        /** Dealing faceup cards */
+        for (int i = 0; i < tableauPiles.size(); i++) {
+            Card topCard = tableauPiles.get(i).getTopCard();
+            topCard.flip();
+        }
+
         deckIterator.forEachRemaining(card -> {
             stockPile.addCard(card);
             addMouseEventHandlers(card);
