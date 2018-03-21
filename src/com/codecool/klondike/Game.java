@@ -91,12 +91,15 @@ public class Game extends Pane {
             return;
         Card card = (Card) e.getSource();
         Pile pile = getValidIntersectingPile(card, tableauPiles);
+        Pile foundationPile = getValidIntersectingPile(card, foundationPiles);
         if (pile != null) {
             handleValidMove(card, pile);
+        } else if (foundationPile != null) {
+            handleValidMove(card, foundationPile);
         } else {
             System.out.println("Invalid Move!");
             for (Card cards : draggedCards){
-                MouseUtil.slideBack(card);
+                MouseUtil.slideBack(cards);
             }
             draggedCards.clear();
         }
@@ -131,13 +134,26 @@ public class Game extends Pane {
     }
 
     private boolean isMoveValid(Card card, Pile destPile) {
-        if (isRightRank(card, destPile)) {
-            if (destPile.isEmpty() && card.getRank().getName().equals("King")) {
-                return true;
-            } else if (!destPile.isEmpty() && Card.isOppositeColor(card, destPile.getTopCard())) {
-                return true;
+        System.out.println(destPile.getPileType().toString());
+        if (destPile.getPileType() == Pile.PileType.TABLEAU) {
+            if (isRightRank(card, destPile)) {
+                if (destPile.isEmpty() && card.getRank().getName().equals("King")) {
+                    return true;
+                } else if (!destPile.isEmpty() && Card.isOppositeColor(card, destPile.getTopCard())) {
+                    return true;
+                }
+                return false;
             }
-            return false;
+        }
+        if (destPile.getPileType() == Pile.PileType.FOUNDATION){
+            if (isRightRank(card, destPile)) {
+                if (destPile.isEmpty() && card.getRank().getName().equals("Ace")) {
+                    return true;
+                } else if (!destPile.isEmpty() && (card.getSuit() == destPile.getTopCard().getSuit())) {
+                    return true;
+                }
+                return false;
+            }
         }
         return false;
     }
@@ -162,13 +178,18 @@ public class Game extends Pane {
 
     private void handleValidMove(Card card, Pile destPile) {
         String msg = null;
-        if (destPile.isEmpty()) {
-            if (destPile.getPileType().equals(Pile.PileType.FOUNDATION))
+        if (destPile.getPileType() == Pile.PileType.TABLEAU) {
+            if (destPile.isEmpty()) {
+                    msg = String.format("Placed %s to a new pile.", card);
+            } else {
+                msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
+            }
+        } else if (destPile.getPileType() == Pile.PileType.FOUNDATION){
+            if (destPile.isEmpty()) {
                 msg = String.format("Placed %s to the foundation.", card);
-            if (destPile.getPileType().equals(Pile.PileType.TABLEAU))
-                msg = String.format("Placed %s to a new pile.", card);
-        } else {
-            msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
+            } else {
+                msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
+            }
         }
 
         System.out.println(msg);
@@ -179,11 +200,24 @@ public class Game extends Pane {
 
 
     private boolean isRightRank(Card card, Pile destpile) {
-        Card card2 = destpile.getTopCard();
-        if (destpile.isEmpty()) {
-            return true;
+        if (destpile.getPileType() == Pile.PileType.TABLEAU) {
+
+            Card card2 = destpile.getTopCard();
+            if (destpile.isEmpty()) {
+
+                return true;
+            }
+            return ((card2.getRank().getValue() - card.getRank().getValue()) == 1);
+
+        } else if (destpile.getPileType() == Pile.PileType.FOUNDATION){
+
+            Card card2 = destpile.getTopCard();
+            if (destpile.isEmpty()){
+                return true;
+            }
+            return ((card.getRank().getValue() - card2.getRank().getValue() == 1));
         }
-        return ((card2.getRank().getValue() - card.getRank().getValue()) == 1);
+        return false;
     }
 
     private void initPiles() {
