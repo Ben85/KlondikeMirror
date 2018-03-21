@@ -109,6 +109,9 @@ public class Game extends Pane {
             if (card.getContainingPile().getCardUnderTopCard(card).isFaceDown()) {
                 card.getContainingPile().getCardUnderTopCard(card).flip();
             }
+            if(isGameWon()){
+                createWinningPopUpWindow();
+            }
 
         } else {
             System.out.println("Invalid Move!");
@@ -124,7 +127,7 @@ public class Game extends Pane {
         for (Pile foundationPile: foundationPiles) {
             numberOfCardsInFoundationPiles += foundationPile.numOfCards();
         }
-        boolean isAllCardsInFoundationPiles = (numberOfCardsInFoundationPiles == 52);
+        boolean isAllCardsInFoundationPiles = (numberOfCardsInFoundationPiles == 51);
         return isAllCardsInFoundationPiles;
     }
 
