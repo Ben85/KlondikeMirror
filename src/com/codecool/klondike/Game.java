@@ -94,12 +94,18 @@ public class Game extends Pane {
         Pile foundationPile = getValidIntersectingPile(card, foundationPiles);
         if (pile != null) {
             handleValidMove(card, pile);
-            if(card.getContainingPile().getTopCard().isFaceDown()){
-                card.getContainingPile().getTopCard().flip();
+            Card card2 = card.getContainingPile().getCardUnderTopCard(card);
+            if(card2.isFaceDown()){
+                card2.flip();
             }
 
         } else if (foundationPile != null) {
             handleValidMove(card, foundationPile);
+            if(card.getContainingPile().getCardUnderTopCard(card).isFaceDown()){
+                card.getContainingPile().getCardUnderTopCard(card).flip();
+                System.out.println("Wurking");
+            }
+
         } else {
             System.out.println("Invalid Move!");
             for (Card cards : draggedCards){
