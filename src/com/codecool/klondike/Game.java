@@ -134,7 +134,6 @@ public class Game extends Pane {
     }
 
     private boolean isMoveValid(Card card, Pile destPile) {
-        System.out.println(destPile.getPileType().toString());
         if (destPile.getPileType() == Pile.PileType.TABLEAU) {
             if (isRightRank(card, destPile)) {
                 if (destPile.isEmpty() && card.getRank().getName().equals("King")) {
