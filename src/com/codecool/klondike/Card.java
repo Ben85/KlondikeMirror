@@ -9,8 +9,8 @@ import java.util.*;
 
 public class Card extends ImageView {
 
-    private int suit;
-    private int rank;
+    private Suit suit;
+    private Rank rank;
     private boolean faceDown;
 
     private Image backFace;
@@ -23,7 +23,7 @@ public class Card extends ImageView {
     public static final int WIDTH = 150;
     public static final int HEIGHT = 215;
 
-    public Card(int suit, int rank, boolean faceDown) {
+    public Card(Suit suit, Rank rank, boolean faceDown) {
         this.suit = suit;
         this.rank = rank;
         this.faceDown = faceDown;
@@ -34,11 +34,11 @@ public class Card extends ImageView {
         setEffect(dropShadow);
     }
 
-    public int getSuit() {
+    public Suit getSuit() {
         return suit;
     }
 
-    public int getRank() {
+    public Rank getRank() {
         return rank;
     }
 
@@ -47,7 +47,7 @@ public class Card extends ImageView {
     }
 
     public String getShortName() {
-        return "S" + suit + "R" + rank;
+        return suit.getName() + rank.getValue();
     }
 
     public DropShadow getDropShadow() {
@@ -74,12 +74,11 @@ public class Card extends ImageView {
 
     @Override
     public String toString() {
-        return "The " + "Rank" + rank + " of " + "Suit" + suit;
+        return "The " + rank.getName() + " of " + suit.getName();
     }
 
     public static boolean isOppositeColor(Card card1, Card card2) {
-        //TODO
-        return true;
+        return (! card1.suit.getColor().equals(card2.suit.getColor()));
     }
 
     public static boolean isSameSuit(Card card1, Card card2) {
@@ -88,38 +87,82 @@ public class Card extends ImageView {
 
     public static List<Card> createNewDeck() {
         List<Card> result = new ArrayList<>();
-        for (int suit = 1; suit < 5; suit++) {
-            for (int rank = 1; rank < 14; rank++) {
+        for (Suit suit: Suit.values()) {
+            for (Rank rank: Rank.values()) {
                 result.add(new Card(suit, rank, true));
             }
         }
+        Collections.shuffle(result);
         return result;
     }
 
     public static void loadCardImages() {
         cardBackImage = new Image("card_images/card_back.png");
         String suitName = "";
-        for (int suit = 1; suit < 5; suit++) {
-            switch (suit) {
-                case 1:
-                    suitName = "hearts";
-                    break;
-                case 2:
-                    suitName = "diamonds";
-                    break;
-                case 3:
-                    suitName = "spades";
-                    break;
-                case 4:
-                    suitName = "clubs";
-                    break;
-            }
-            for (int rank = 1; rank < 14; rank++) {
-                String cardName = suitName + rank;
-                String cardId = "S" + suit + "R" + rank;
+        for (Suit suit: Suit.values()) {
+            suitName = suit.getName();
+
+            for (Rank rank: Rank.values()) {
+                int rankValue = rank.getValue();
+                String cardName = suitName + rankValue;
                 String imageFileName = "card_images/" + cardName + ".png";
-                cardFaceImages.put(cardId, new Image(imageFileName));
+                cardFaceImages.put(cardName, new Image(imageFileName));
             }
+        }
+    }
+
+    public enum Suit {
+        HEARTS ("hearts", "red"),
+        DIAMONDS ("diamonds", "red"),
+        SPADES ("spades", "black"),
+        CLUBS ("clubs", "black");
+
+        private final String name;
+        private final String color;
+
+        Suit(String name, String color) {
+            this.name = name;
+            this.color = color;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getColor() {
+            return color;
+        }
+    }
+
+    public enum Rank {
+        ACE (1, "Ace"),
+        TWO (2, "two"),
+        THREE (3, "three"),
+        FOUR (4, "four"),
+        FIVE (5, "five"),
+        SIX (6, "six"),
+        SEVEN (7, "seven"),
+        EIGHT (8, "eight"),
+        NINE (9, "nine"),
+        TEN (10, "ten"),
+        JACK (11, "Jack"),
+        QUEEN (12, "Queen"),
+        KING (13, "King");
+
+        private final int value;
+        private final String name;
+
+        Rank (int value, String name){
+            this.value = value;
+            this.name = name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
