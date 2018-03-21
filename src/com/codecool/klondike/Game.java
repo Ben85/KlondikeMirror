@@ -46,14 +46,6 @@ public class Game extends Pane {
         refillStockFromDiscard();
     };
 
-    private EventHandler<MouseEvent> flipCardOnClick = e -> {
-        Card card = (Card) e.getSource();
-        Pile pile = getValidIntersectingPile(card, tableauPiles);
-        if(card.isFaceDown() && pile != null){
-            card.flip();
-        }
-    };
-
     private EventHandler<MouseEvent> onMousePressedHandler = e -> {
         dragStartX = e.getSceneX();
         dragStartY = e.getSceneY();
@@ -102,6 +94,10 @@ public class Game extends Pane {
         Pile foundationPile = getValidIntersectingPile(card, foundationPiles);
         if (pile != null) {
             handleValidMove(card, pile);
+            if(card.getContainingPile().getTopCard().isFaceDown()){
+                card.getContainingPile().getTopCard().flip();
+            }
+
         } else if (foundationPile != null) {
             handleValidMove(card, foundationPile);
         } else {
@@ -129,7 +125,6 @@ public class Game extends Pane {
         card.setOnMouseDragged(onMouseDraggedHandler);
         card.setOnMouseReleased(onMouseReleasedHandler);
         card.setOnMouseClicked(onMouseClickedHandler);
-        card.setOnMouseClicked(flipCardOnClick);
     }
 
     public void refillStockFromDiscard() {
