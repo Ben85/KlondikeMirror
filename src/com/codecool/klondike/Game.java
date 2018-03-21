@@ -61,12 +61,27 @@ public class Game extends Pane {
 
         draggedCards.clear();
         draggedCards.add(card);
-
+        card.toFront();
+        int counter = 1;
+        for (int i = card.getContainingPile().getCards().indexOf(card); i < card.getContainingPile().getCards().size(); i++){
+            Card cards = card.getContainingPile().getCards().get(i);
+            if (card.getContainingPile().getPileType() == Pile.PileType.TABLEAU && card != cards ) {
+                draggedCards.add(cards);
+                cards.getDropShadow().setRadius(20);
+                cards.getDropShadow().setOffsetX(10);
+                cards.getDropShadow().setOffsetY(10);
+                cards.toFront();
+                cards.setTranslateX(offsetX);
+                cards.setTranslateY(offsetY);
+                counter++;
+            }
+        }
         card.getDropShadow().setRadius(20);
         card.getDropShadow().setOffsetX(10);
         card.getDropShadow().setOffsetY(10);
-
-        card.toFront();
+        if (draggedCards.size() == 1) {
+            card.toFront();
+        }
         card.setTranslateX(offsetX);
         card.setTranslateY(offsetY);
     };
@@ -80,7 +95,9 @@ public class Game extends Pane {
             handleValidMove(card, pile);
         } else {
             System.out.println("Invalid Move!");
-            MouseUtil.slideBack(card);
+            for (Card cards : draggedCards){
+                MouseUtil.slideBack(card);
+            }
             draggedCards.clear();
         }
     };
