@@ -78,11 +78,12 @@ public class Game extends Pane {
             return;
         Card card = (Card) e.getSource();
         Pile pile = getValidIntersectingPile(card, tableauPiles);
-        //TODO
         if (pile != null) {
             handleValidMove(card, pile);
         } else {
-            draggedCards.forEach(MouseUtil::slideBack);
+            System.out.println("Invalid Move!");
+            MouseUtil.slideBack(card);
+            draggedCards.clear();
         }
     };
 
@@ -109,10 +110,18 @@ public class Game extends Pane {
         System.out.println("Stock refilled from discard pile.");
     }
 
-    public boolean isMoveValid(Card card, Pile destPile) {
-        //TODO
-        return true;
+    private boolean isMoveValid(Card card, Pile destPile) {
+        if (isRightRank(card, destPile)) {
+            if (destPile.isEmpty() && card.getRank().getName().equals("King")) {
+                return true;
+            } else if (!destPile.isEmpty() && Card.isOppositeColor(card, destPile.getTopCard())) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
+
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
         Pile result = null;
         for (Pile pile : piles) {
@@ -141,32 +150,20 @@ public class Game extends Pane {
         } else {
             msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
         }
-        if (isRightRank(card, destPile)) {
-            if (destPile.isEmpty() && card.getRank().getName().equals("King")){
-                System.out.println(msg);
-                MouseUtil.slideToDest(draggedCards, destPile);
-                draggedCards.clear();
-            } else if ( !destPile.isEmpty() && Card.isOppositeColor(card, destPile.getTopCard())) {
-                System.out.println(msg);
-                MouseUtil.slideToDest(draggedCards, destPile);
-                draggedCards.clear();
-            } else {
-                onFalseMove(card);
-            }
-        } else {
-            onFalseMove(card);
-        }
-    }
 
-    private void onFalseMove(Card card){
-        System.out.println("Invalid Move");
-        MouseUtil.slideBack(card);
+        System.out.println(msg);
+        MouseUtil.slideToDest(draggedCards, destPile);
         draggedCards.clear();
+
     }
 
-    private boolean isRightRank(Card card, Pile destpile ){
+
+    private boolean isRightRank(Card card, Pile destpile) {
         Card card2 = destpile.getTopCard();
-        return (destpile.isEmpty() || card2.getRank().getValue() - card.getRank().getValue() == 1);
+        if (destpile.isEmpty()) {
+            return true;
+        }
+        return ((card2.getRank().getValue() - card.getRank().getValue()) == 1);
     }
 
     private void initPiles() {
