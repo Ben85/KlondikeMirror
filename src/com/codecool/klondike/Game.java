@@ -67,17 +67,6 @@ public class Game extends Pane {
         dragStartY = e.getSceneY();
     };
 
-    /*private EventHandler<MouseEvent> onDoubleClickPlaceOnFoundation = e -> {
-        Card card = (Card) e.getSource();
-        if (e.getClickCount() == 2) {
-             for(int i = 0; i < foundationPiles.size(); i++){
-                 if(isMoveValid(card, foundationPiles.get(i))){
-                    card.moveToPile(foundationPiles.get(i));
-                 }
-             }
-        }
-    };*/
-
     private EventHandler<MouseEvent> onMouseDraggedHandler = e -> {
         Card card = (Card) e.getSource();
         Pile activePile = card.getContainingPile();
@@ -123,16 +112,10 @@ public class Game extends Pane {
         Pile foundationPile = getValidIntersectingPile(card, foundationPiles);
         if (pile != null) {
             handleValidMove(card, pile);
-            /*Card card2 = card.getContainingPile().getCardUnderTopCard(card);
-            if (card2.isFaceDown()) {
-                card2.flip();
-            }*/
 
         } else if (foundationPile != null) {
             handleValidMove(card, foundationPile);
-            /*if (card.getContainingPile().getCardUnderTopCard(card).isFaceDown()) {
-                card.getContainingPile().getCardUnderTopCard(card).flip();
-            }*/
+
             if(isGameWon()){
                 createWinningPopUpWindow();
             }
@@ -166,7 +149,7 @@ public class Game extends Pane {
         card.setOnMouseDragged(onMouseDraggedHandler);
         card.setOnMouseReleased(onMouseReleasedHandler);
         card.setOnMouseClicked(onMouseClickedHandler);
-        //card.setOnMouseClicked(onDoubleClickPlaceOnFoundation);
+
     }
 
     public void refillStockFromDiscard() {
