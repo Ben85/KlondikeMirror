@@ -78,7 +78,11 @@ public class Pile extends Pane {
             return null;
         }
         else if (card.getContainingPile().getCards().size() > 1){
-            return cards.get(card.getContainingPile().getCards().indexOf(card) - 1);
+            try {
+                return cards.get(card.getContainingPile().getCards().indexOf(card) - 1);
+            } catch (ArrayIndexOutOfBoundsException e){
+                return cards.get(card.getContainingPile().getCards().indexOf(card));
+            }
         }
         return cards.get(0);
     }

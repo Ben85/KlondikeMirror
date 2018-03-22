@@ -304,7 +304,7 @@ public class Game extends Pane {
 
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
-        //TODO
+
         /** Dealing facedown cards to each tableau */
         for (int i = 0; i < tableauPiles.size(); i++) {
             for (int j = 0; j <= i; j++) {
