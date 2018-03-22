@@ -47,8 +47,11 @@ public class Game extends Pane {
         } else if (e.getClickCount() == 2){
             for(int i = 0; i < foundationPiles.size(); i++){
                 if(isMoveValid(card, foundationPiles.get(i))){
-                    handleValidMove(card, foundationPiles.get(i));
-                    card.moveToPile(foundationPiles.get(i));
+                    if(card.isTopCard(card)) {
+                        handleValidMove(card, foundationPiles.get(i));
+                        card.moveToPile(foundationPiles.get(i));
+                    }
+
                 }
             }
         }
@@ -177,27 +180,27 @@ public class Game extends Pane {
     }
 
     private boolean isMoveValid(Card card, Pile destPile) {
-        if (destPile.getPileType() == Pile.PileType.TABLEAU) {
-            if (isRightRank(card, destPile)) {
-                if (destPile.isEmpty() && card.getRank().getName().equals("King")) {
-                    return true;
-                } else if (!destPile.isEmpty() && Card.isOppositeColor(card, destPile.getTopCard())) {
-                    return true;
+            if (destPile.getPileType() == Pile.PileType.TABLEAU) {
+                if (isRightRank(card, destPile)) {
+                    if (destPile.isEmpty() && card.getRank().getName().equals("King")) {
+                        return true;
+                    } else if (!destPile.isEmpty() && Card.isOppositeColor(card, destPile.getTopCard())) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
-        }
-        if (destPile.getPileType() == Pile.PileType.FOUNDATION) {
-            if (isRightRank(card, destPile)) {
-                if (destPile.isEmpty() && card.getRank().getName().equals("Ace")) {
-                    return true;
-                } else if (!destPile.isEmpty() && (card.getSuit() == destPile.getTopCard().getSuit())) {
-                    return true;
+            if (destPile.getPileType() == Pile.PileType.FOUNDATION) {
+                if (isRightRank(card, destPile)) {
+                    if (destPile.isEmpty() && card.getRank().getName().equals("Ace")) {
+                        return true;
+                    } else if (!destPile.isEmpty() && (card.getSuit() == destPile.getTopCard().getSuit())) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
-        }
-        return false;
+            return false;
     }
 
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
