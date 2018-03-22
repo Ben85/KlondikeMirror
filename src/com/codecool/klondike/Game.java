@@ -37,12 +37,22 @@ public class Game extends Pane {
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
-        if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
-            card.moveToPile(discardPile);
-            card.flip();
-            card.setMouseTransparent(false);
-            System.out.println("Placed " + card + " to the waste.");
+        if(e.getClickCount() == 1) {
+            if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
+                card.moveToPile(discardPile);
+                card.flip();
+                card.setMouseTransparent(false);
+                System.out.println("Placed " + card + " to the waste.");
+            }
+        } else if (e.getClickCount() == 2){
+            for(int i = 0; i < foundationPiles.size(); i++){
+                if(isMoveValid(card, foundationPiles.get(i))){
+                    handleValidMove(card, foundationPiles.get(i));
+                    card.moveToPile(foundationPiles.get(i));
+                }
+            }
         }
+
     };
 
     private EventHandler<MouseEvent> stockReverseCardsHandler = e -> {
@@ -53,6 +63,17 @@ public class Game extends Pane {
         dragStartX = e.getSceneX();
         dragStartY = e.getSceneY();
     };
+
+    /*private EventHandler<MouseEvent> onDoubleClickPlaceOnFoundation = e -> {
+        Card card = (Card) e.getSource();
+        if (e.getClickCount() == 2) {
+             for(int i = 0; i < foundationPiles.size(); i++){
+                 if(isMoveValid(card, foundationPiles.get(i))){
+                    card.moveToPile(foundationPiles.get(i));
+                 }
+             }
+        }
+    };*/
 
     private EventHandler<MouseEvent> onMouseDraggedHandler = e -> {
         Card card = (Card) e.getSource();
@@ -99,16 +120,16 @@ public class Game extends Pane {
         Pile foundationPile = getValidIntersectingPile(card, foundationPiles);
         if (pile != null) {
             handleValidMove(card, pile);
-            Card card2 = card.getContainingPile().getCardUnderTopCard(card);
+            /*Card card2 = card.getContainingPile().getCardUnderTopCard(card);
             if (card2.isFaceDown()) {
                 card2.flip();
-            }
+            }*/
 
         } else if (foundationPile != null) {
             handleValidMove(card, foundationPile);
-            if (card.getContainingPile().getCardUnderTopCard(card).isFaceDown()) {
+            /*if (card.getContainingPile().getCardUnderTopCard(card).isFaceDown()) {
                 card.getContainingPile().getCardUnderTopCard(card).flip();
-            }
+            }*/
             if(isGameWon()){
                 createWinningPopUpWindow();
             }
@@ -142,6 +163,7 @@ public class Game extends Pane {
         card.setOnMouseDragged(onMouseDraggedHandler);
         card.setOnMouseReleased(onMouseReleasedHandler);
         card.setOnMouseClicked(onMouseClickedHandler);
+        //card.setOnMouseClicked(onDoubleClickPlaceOnFoundation);
     }
 
     public void refillStockFromDiscard() {
@@ -198,6 +220,11 @@ public class Game extends Pane {
 
     private void handleValidMove(Card card, Pile destPile) {
         String msg = null;
+        if (card.getContainingPile().getCardUnderTopCard(card).isFaceDown()) {
+            card.getContainingPile().getCardUnderTopCard(card).flip();
+        } else if (card.getContainingPile().getTopCard().isFaceDown()){
+            card.getContainingPile().getTopCard().flip();
+        }
         if (destPile.getPileType() == Pile.PileType.TABLEAU) {
             if (destPile.isEmpty()) {
                 msg = String.format("Placed %s to a new pile.", card);
