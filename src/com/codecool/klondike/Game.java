@@ -122,6 +122,10 @@ public class Game extends Pane {
         draggedCards.clear();
     };
 
+    private EventHandler<MouseEvent> clickOnRestartEventHandler = e -> {
+        restart();
+    };
+
     public boolean isGameWon() {
         int numberOfCardsInFoundationPiles = 0;
         for (Pile foundationPile: foundationPiles) {
@@ -135,6 +139,7 @@ public class Game extends Pane {
         deck = Card.createNewDeck();
         initPiles();
         dealCards();
+        addRestartButton();
     }
 
     public void addMouseEventHandlers(Card card) {
@@ -304,6 +309,25 @@ public class Game extends Pane {
                 BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
     }
 
+    public void addRestartButton() {
+        Image imageRestart = new Image("popup/restart.png");
+        Button restartButton = new Button("", new ImageView(imageRestart));
+        restartButton.setOnMouseClicked(clickOnRestartEventHandler);
+        getChildren().add(restartButton);
+    }
+
+    public void restart() {
+        stockPile.clear();
+        discardPile.clear();
+        tableauPiles.clear();
+        foundationPiles.clear();
+        getChildren().clear();
+        deck = Card.createNewDeck();
+        initPiles();
+        dealCards();
+        addRestartButton();
+    }
+
     public void createWinningPopUpWindow() {
         Stage winningStage = new Stage();
         GridPane layout = new GridPane();
@@ -316,6 +340,21 @@ public class Game extends Pane {
 
         Button restartButton = new Button("Restart", new ImageView(imageRestart));
         Button quitButton = new Button("Quit", new ImageView(imageQuit));
+
+        restartButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                winningStage.close();
+                restart();
+            }
+        });
+
+        quitButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.exit(0);
+            }
+        });
 
         BackgroundImage backgroundImage = new BackgroundImage(green,
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
