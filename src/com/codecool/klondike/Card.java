@@ -72,6 +72,14 @@ public class Card extends ImageView {
         setImage(faceDown ? backFace : frontFace);
     }
 
+    public boolean isTopCard(Card card){
+        if(this.getContainingPile().getTopCard().equals(card)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     @Override
     public String toString() {
         return "The " + rank.getName() + " of " + suit.getName();
