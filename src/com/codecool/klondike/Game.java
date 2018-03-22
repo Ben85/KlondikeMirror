@@ -3,15 +3,15 @@ package com.codecool.klondike;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import javafx.scene.*;
 
 import java.util.*;
 
@@ -30,6 +30,9 @@ public class Game extends Pane {
     private static double STOCK_GAP = 1;
     private static double FOUNDATION_GAP = 0;
     private static double TABLEAU_GAP = 30;
+
+    private static final double POPUP_WINDOW_WIDTH = 538;
+    private static final double POPUP_WINDOW_HEIGHT = 500;
 
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
@@ -106,6 +109,9 @@ public class Game extends Pane {
             if (card.getContainingPile().getCardUnderTopCard(card).isFaceDown()) {
                 card.getContainingPile().getCardUnderTopCard(card).flip();
             }
+            if(isGameWon()){
+                createWinningPopUpWindow();
+            }
 
         } else {
             System.out.println("Invalid Move!");
@@ -117,8 +123,12 @@ public class Game extends Pane {
     };
 
     public boolean isGameWon() {
-        //TODO
-        return false;
+        int numberOfCardsInFoundationPiles = 0;
+        for (Pile foundationPile: foundationPiles) {
+            numberOfCardsInFoundationPiles += foundationPile.numOfCards();
+        }
+        boolean isAllCardsInFoundationPiles = (numberOfCardsInFoundationPiles == 51);
+        return isAllCardsInFoundationPiles;
     }
 
     public Game() {
@@ -292,6 +302,42 @@ public class Game extends Pane {
         setBackground(new Background(new BackgroundImage(tableBackground,
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+    }
+
+    public void createWinningPopUpWindow() {
+        Stage winningStage = new Stage();
+        GridPane layout = new GridPane();
+
+        Image green = new Image("table/green.png");
+        Image gif = new Image("popup/putin.gif");
+        Image imageRestart = new Image("popup/restart.png");
+        Image imageQuit = new Image("popup/quit.png");
+        ImageView gifImageView = new ImageView(gif);
+
+        Button restartButton = new Button("Restart", new ImageView(imageRestart));
+        Button quitButton = new Button("Quit", new ImageView(imageQuit));
+
+        BackgroundImage backgroundImage = new BackgroundImage(green,
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+                BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+        Background background = new Background(backgroundImage);
+
+        restartButton.setMinWidth(100);
+        quitButton.setMinWidth(100);
+
+
+        GridPane.setConstraints(gifImageView, 0, 0, 2,1);
+        GridPane.setConstraints(restartButton, 0, 1);
+        GridPane.setConstraints(quitButton, 1, 1);
+
+        layout.getChildren().addAll(gifImageView, restartButton, quitButton);
+        layout.setBackground(background);
+        layout.setHgap(338);
+        layout.setVgap(20);
+
+        winningStage.setTitle("Congrats!");
+        winningStage.setScene(new Scene(layout ,POPUP_WINDOW_WIDTH, POPUP_WINDOW_HEIGHT));
+        winningStage.show();
     }
 
 }
