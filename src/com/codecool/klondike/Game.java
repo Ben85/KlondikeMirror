@@ -149,6 +149,7 @@ public class Game extends Pane {
         initPiles();
         dealCards();
         addRestartButton();
+        demoMode();
     }
 
     public void addMouseEventHandlers(Card card) {
@@ -331,6 +332,20 @@ public class Game extends Pane {
         getChildren().add(restartButton);
     }
 
+    public void demoMode() {
+        Image imageWin = new Image("popup/win.png");
+        Button winButton = new Button("", new ImageView(imageWin));
+        winButton.setOnMouseClicked(clickOnDemoEventHandler);
+        winButton.setLayoutY(40);
+        winButton.setMaxWidth(45);
+        getChildren().add(winButton);
+    }
+
+    private EventHandler<MouseEvent> clickOnDemoEventHandler = e -> {
+        createWinningPopUpWindow();
+    };
+
+
     public void restart() {
         stockPile.clear();
         discardPile.clear();
@@ -341,6 +356,7 @@ public class Game extends Pane {
         initPiles();
         dealCards();
         addRestartButton();
+        demoMode();
     }
 
     public void createWinningPopUpWindow() {
