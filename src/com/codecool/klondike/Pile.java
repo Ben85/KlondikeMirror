@@ -40,8 +40,7 @@ public class Pile extends Pane {
     }
 
     public int numOfCards() {
-        //TODO
-        return 1;
+        return cards.size();
     }
 
     public boolean isEmpty() {
@@ -49,7 +48,7 @@ public class Pile extends Pane {
     }
 
     public void clear() {
-        //TODO
+        this.getCards().clear();
     }
 
     public void addCard(Card card) {
@@ -72,6 +71,20 @@ public class Pile extends Pane {
             return null;
         else
             return cards.get(cards.size() - 1);
+    }
+
+    public Card getCardUnderTopCard(Card card){
+        if (cards.isEmpty()) {
+            return null;
+        }
+        else if (card.getContainingPile().getCards().size() > 1){
+            try {
+                return cards.get(card.getContainingPile().getCards().indexOf(card) - 1);
+            } catch (ArrayIndexOutOfBoundsException e){
+                return cards.get(card.getContainingPile().getCards().indexOf(card));
+            }
+        }
+        return cards.get(0);
     }
 
     public void setBlurredBackground() {
