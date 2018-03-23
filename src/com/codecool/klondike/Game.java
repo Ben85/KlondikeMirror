@@ -46,12 +46,14 @@ public class Game extends Pane {
             }
         } else if (e.getClickCount() == 2){
             for(int i = 0; i < foundationPiles.size(); i++){
-                if(isMoveValid(card, foundationPiles.get(i))){
-                    if(card.isTopCard(card)) {
-                        handleValidMove(card, foundationPiles.get(i));
-                        card.moveToPile(foundationPiles.get(i));
-                    }
+                if(!card.isFaceDown()) {
+                    if (isMoveValid(card, foundationPiles.get(i))) {
+                        if (card.isTopCard(card)) {
+                            handleValidMove(card, foundationPiles.get(i));
+                            card.moveToPile(foundationPiles.get(i));
+                        }
 
+                    }
                 }
             }
         }
